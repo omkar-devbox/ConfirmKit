@@ -1,18 +1,23 @@
-<div class="glass-dialog" [class.loading]="state.data?.loading">
+<div class="glass-dialog" [class.loading]="state.loading">
   <div class="glass-header">
     <div class="icon-blob"></div>
-    <h2>{{ state.title }}</h2>
+    <h2>{{ getTitle() }}</h2>
   </div>
 
   <div class="glass-body">
-    <p>{{ state.description }}</p>
-    <div *ngIf="state.data?.image" style="margin-top: 15px; text-align: center;">
-      <img [src]="'assets/' + state.data.image" alt="Feedback" class="dialog-image" style="max-width: 100%; border-radius: 8px;" />
-    </div>
+    <p>{{ getMessage() }}</p>
   </div>
 
   <div class="glass-footer">
-    <button class="glass-btn glass-btn-cancel" (click)="state.resolve(false)">{{ state.cancelText || 'Cancel' }}</button>
-    <button class="glass-btn glass-btn-confirm" (click)="state.resolve(true)">{{ state.confirmText || 'Confirm' }}</button>
+    <button 
+      *ngFor="let button of getButtons()"
+      [attr.data-variant]="button.variant"
+      [disabled]="button.disabled || state.loading"
+      (click)="handleAction(button.id || '')"
+      class="glass-btn"
+    >
+      <span *ngIf="button.loading" class="loader"></span>
+      {{ button.label }}
+    </button>
   </div>
 </div>

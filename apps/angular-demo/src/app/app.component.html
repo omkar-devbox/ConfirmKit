@@ -1,52 +1,79 @@
 <div class="demo-container">
   <header>
-    <h1>ConfirmKit Demo</h1>
-    <p>Testing the fully Headless, Framework-Agnostic @confirmation-box/angular library components.</p>
+    <h1>Confirmation Box Demo</h1>
+    <p>Testing @confirmation-box/angular library components and service.</p>
   </header>
 
   <main class="demo-grid">
+    <!-- Case 1: Basic Service -->
     <section class="card">
       <h3>1. Basic Confirm (Service)</h3>
       <p>Simple service call using <code>confirmService.confirm()</code>.</p>
       <button class="btn btn-primary" (click)="showBasicConfirm()">Show Basic</button>
     </section>
 
+    <!-- Case 2: Directive Usage -->
     <section class="card">
       <h3>2. Directive Usage</h3>
-      <p>Using the <code>[confirmTrigger]</code> structural directive on buttons.</p>
-      <button class="btn btn-secondary" [confirmTrigger]="directiveOptions" (confirmed)="onConfirmed()" (cancelled)="onCancelled()">
+      <p>Using the <code>[confirm]</code> structural/attribute-like directive.</p>
+      <button class="btn btn-secondary" [confirm]="directiveOptions" (confirmed)="onConfirmed($event)"
+        (cancelled)="onCancelled()">
         Show via Directive
       </button>
     </section>
 
+    <!-- Case 3: Async Action -->
     <section class="card">
-      <h3>3. Async Action Hook</h3>
-      <p>Dialog with an await handler before triggering logical side effects.</p>
+      <h3>3. Async Action</h3>
+      <p>Dialog with an async handler and loading state.</p>
       <button class="btn btn-success" (click)="showAsyncConfirm()">Show Async</button>
     </section>
 
+    <!-- Case 4: Multi-step -->
     <section class="card">
-      <h3>4. Multi-step Flow (Promises)</h3>
-      <p>Demonstrate elegant promise chaining natively without bloated config arrays.</p>
+      <h3>4. Multi-step Flow</h3>
+      <p>Demonstrate navigation between multiple dialog steps.</p>
       <button class="btn btn-warning" (click)="showMultiStep()">Show Multi-step</button>
     </section>
 
+    <!-- Case 5: Queue Test -->
     <section class="card">
       <h3>5. Queue Management</h3>
-      <p>Triggers 3 dialogs rapidly to verify Core FIFO queue behavior.</p>
+      <p>Triggers 3 dialogs rapidly to verify FIFO queue behavior.</p>
       <button class="btn btn-danger" (click)="showQueueTest()">Trigger Queue</button>
     </section>
 
+    <!-- Case 6: Custom UI (Per-call) -->
     <section class="card highlight">
-      <h3>6. Custom UI (Headless Mode)</h3>
-      <p>Trigger a dialog that reads `data.useCustomTheme` to let the ng-template render custom UI.</p>
+      <h3>6. Custom UI (Injection)</h3>
+      <p>Pass a custom component directly to the <code>confirm()</code> method.</p>
       <button class="btn btn-premium" (click)="showCustomUI()">Show Custom UI</button>
     </section>
 
+    <!-- Case 7: Fallback Mechanism -->
     <section class="card">
-      <h3>7. Data Payloads</h3>
-      <p>Pass custom UI config (like images) natively via `data` types.</p>
-      <button class="btn btn-success" (click)="showImageConfirm()">Show with Data</button>
+      <h3>7. Strict Fallback</h3>
+      <p>Verifies the mandatory fallback to <code>DefaultConfirmComponent</code>.</p>
+      <button class="btn btn-outline" (click)="showFallbackDemo()">Show Fallback</button>
+    </section>
+    <!-- Case 8: Custom multi-step -->
+    <section class="card highlight">
+      <h3>8. Custom Multi-step</h3>
+      <p>Combine custom UI components with multi-step flow logic.</p>
+      <button class="btn btn-premium" (click)="showCustomMultiStep()">Show Custom Multi-step</button>
+    </section>
+    <!-- Case 9: Image Support -->
+    <section class="card">
+      <h3>9. Visual Feedback</h3>
+      <p>Pass an image URL to display a rich illustration in the dialog.</p>
+      <button class="btn btn-success" (click)="showImageConfirm()">Show with Image</button>
+    </section>
+
+    <!-- Case 10: Advanced Multi-step -->
+    <section class="card highlight">
+      <h3>10. Pro Multi-step Flow</h3>
+      <p>Advanced step-based navigation with modern UI and custom focus.</p>
+      <button class="btn btn-premium" (click)="showAdvancedMultiStep()">Launch Setup</button>
     </section>
   </main>
 
@@ -64,18 +91,4 @@
       </div>
     </div>
   </aside>
-
-  <!-- The single ConfirmOutlet that handles headlessness! -->
-  <confirm-outlet>
-    <ng-template let-state>
-      <!-- Optional Custom UI logic based on State Context -->
-      <ng-container *ngIf="state.data?.useCustomTheme; else defaultUI">
-        <app-custom-confirm [state]="state"></app-custom-confirm>
-      </ng-container>
-
-      <ng-template #defaultUI>
-        <confirm-default-dialog [state]="state"></confirm-default-dialog>
-      </ng-template>
-    </ng-template>
-  </confirm-outlet>
 </div>

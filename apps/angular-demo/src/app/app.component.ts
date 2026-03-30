@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ConfirmService } from '@confirmation-box/angular';
-import { ConfirmOptions, ConfirmState } from '@confirmation-box/core';
+import { ConfirmService, CONFIRM_UI, ConfirmOptions, ConfirmContext } from '@confirmation-box/angular';
+import { CustomConfirmComponent } from './components/custom-confirm/custom-confirm.component';
 
 @Component({
   selector: 'app-root',
@@ -9,22 +9,22 @@ import { ConfirmOptions, ConfirmState } from '@confirmation-box/core';
   standalone: false
 })
 export class AppComponent {
-  title = 'ConfirmKit Demo';
+  title = 'Confirmation Box Demo';
   logs: string[] = [];
-  
-  // Expose the ConfirmState manually to allow the template to react
-  // in real-time to the current dialog, showing how developers can read state.
+  isGlobalCustom = false;
 
-  constructor(public confirmService: ConfirmService) { }
+  constructor(private confirmService: ConfirmService) { }
 
   // Case 1: Basic confirm (service)
   async showBasicConfirm() {
     this.log('Triggering basic confirm...');
     const result = await this.confirmService.confirm({
       title: 'Delete Item',
-      description: 'Are you sure you want to delete this item? This action cannot be undone.',
-      confirmText: 'Yes, Delete',
-      cancelText: 'Cancel'
+      message: 'Are you sure you want to delete this item?',
+      buttons: [
+        { id: 'cancel', label: 'Cancel', role: 'cancel', variant: 'secondary' },
+        { id: 'confirm', label: 'Delete', role: 'confirm', variant: 'danger', value: 'deleted' }
+      ]
     });
     this.log(`Basic confirm result: ${result}`);
   }
@@ -32,97 +32,213 @@ export class AppComponent {
   // Case 2: Directive usage
   directiveOptions: ConfirmOptions = {
     title: 'Directive Confirm',
-    description: 'This was triggered via a structural/attribute-like directive!',
-    confirmText: 'Got it'
+    message: 'This was triggered via a directive!',
+    buttons: [
+      { id: 'ok', label: 'Got it', role: 'confirm', variant: 'primary', value: 'ok' }
+    ]
   };
 
-  onConfirmed() {
-    this.log(`Directive confirmed!`);
+  onConfirmed(result: any) {
+    this.log(`Directive confirmed: ${result}`);
   }
 
   onCancelled() {
     this.log('Directive cancelled');
   }
 
-  // Case 3: Async API action (Headless handling)
+  // Case 3: Async action
   async showAsyncConfirm() {
     this.log('Triggering async confirm...');
     const result = await this.confirmService.confirm({
       title: 'Async API Action',
-      description: 'Clicking Process will log a result. You can handle asynchronous actions directly before or after the await.',
-      confirmText: 'Process',
-      cancelText: 'Cancel'
+      message: 'This action simulates a network delay with a loading state.',
+      buttons: [
+        { id: 'cancel', label: 'Cancel', role: 'cancel' },
+        {
+          id: 'confirm',
+          label: 'Process',
+          role: 'confirm',
+          variant: 'success',
+          value: 'completed',
+          action: async (ctx) => {
+            this.log('Handler started (2s delay)...');
+            ctx.setLoading(true);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            this.log('Handler finished.');
+            return; // autoClose is true by default
+          }
+        }
+      ]
     });
-    
-    if (result) {
-      this.log('Handler started (1s delay)...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      this.log('Handler finished. Action completed.');
-    } else {
-      this.log('Action cancelled.');
-    }
+    this.log(`Async confirm result: ${result}`);
   }
 
-  // Case 4: Promise-based Multi-step Flow
+  // Case 4: Multi-step confirm
   async showMultiStep() {
     this.log('Triggering basic multi-step confirm...');
-    
-    const step1 = await this.confirmService.confirm({
-      title: 'Step 1: Terms',
-      description: 'Do you agree to our terms of service?',
-      confirmText: 'Agree & Next',
-      cancelText: 'Reject'
+    const result = await this.confirmService.confirm({
+      title: 'Account Setup',
+      steps: [
+        {
+          id: 'step1',
+          title: 'Step 1: Terms',
+          message: 'Do you agree to our terms of service?',
+          buttons: [
+            { id: 'no', label: 'Reject', role: 'cancel' },
+            { id: 'yes', label: 'Agree & Next', action: (ctx) => ctx.next() }
+          ]
+        },
+        {
+          id: 'step2',
+          title: 'Step 2: Confirm',
+          message: 'Ready to create your account?',
+          buttons: [
+            { id: 'back', label: 'Back', action: (ctx) => ctx.back() },
+            { id: 'finish', label: 'Finish', role: 'confirm', value: 'account-created' }
+          ]
+        }
+      ]
     });
-
-    if (!step1) {
-      this.log('User rejected at Step 1.');
-      return;
-    }
-
-    const step2 = await this.confirmService.confirm({
-      title: 'Step 2: Confirm',
-      description: 'Ready to create your account?',
-      confirmText: 'Finish',
-      cancelText: 'Back'
-    });
-
-    this.log(`Multi-step completed. Final result: ${step2}`);
+    this.log(`Multi-step result: ${result}`);
   }
 
-  // Case 5: Built-in Queue Engine Test
+  // Case 10: Advanced Multi-step (Modern)
+  async showAdvancedMultiStep() {
+    this.log('Triggering advanced modern multi-step flow...');
+    const result = await this.confirmService.confirm({
+      title: 'Project Configuration',
+      ui: { variant: 'modern' },
+      behavior: { initialFocus: 'confirm' },
+      steps: [
+        {
+          id: 'general',
+          title: 'General Settings',
+          message: 'Please review the initial project configuration before proceeding.',
+          buttons: [
+            { id: 'cancel', label: 'Cancel', role: 'cancel' },
+            { id: 'next', label: 'Configure UI →', action: (ctx) => ctx.next() }
+          ]
+        },
+        {
+          id: 'ui-settings',
+          title: 'UI Preferences',
+          message: 'Choose your preferred design system for this project.',
+          buttons: [
+            { id: 'back', label: '← Back', action: (ctx) => ctx.back() },
+            { id: 'modern', label: 'Next: Deployment', action: (ctx) => ctx.next() }
+          ]
+        },
+        {
+          id: 'deploy',
+          title: 'Final Deployment',
+          message: (ctx: any) => ctx.context['statusMessage'] || 'All settings are saved. Ready to deploy to production?',
+          buttons: [
+            { id: 'back', label: 'Change Settings', action: (ctx) => ctx.back() },
+            { 
+              id: 'confirm', 
+              label: '🚀 Launch Project', 
+              role: 'confirm', 
+              value: 'deployed-success',
+              action: async (ctx) => {
+                this.log('Deploying project...');
+                ctx.setLoading(true);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                this.log('Deployment successful! Closing in 1s...');
+                
+                // Update context for dynamic message feedback
+                ctx.updateContext({ statusMessage: '✅ Project successfully deployed to production!' } as any);
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                ctx.close('deployed-success');
+              }
+            }
+          ]
+        }
+      ]
+    });
+    this.log(`Advanced multi-step result: ${result}`);
+  }
+
+  // Case 5: Queue test
   showQueueTest() {
-    this.log('Triggering 3 confirms rapidly to test internal Core queueing...');
+    this.log('Triggering 3 confirms rapidly to test queue...');
     [1, 2, 3].forEach(i => {
       this.confirmService.confirm({
         title: `Queued Dialog ${i}`,
-        description: `I am dialog #${i} in the queue. Press OK to see the next one.`,
-        confirmText: 'OK',
-        cancelText: 'Dismiss'
+        message: `I am dialog #${i} in the queue. Press OK to see the next one.`,
+        buttons: [
+          { id: 'ok', label: 'OK', role: 'confirm', value: i }
+        ]
       }).then(res => this.log(`Dialog ${i} resolved with: ${res}`));
     });
   }
-
-  // Case 6: Custom UI Rendering via Template context Let-Binding
+  // Case 6: Custom UI (per call)
   async showCustomUI() {
-    this.log('Triggering custom UI injection...');
+    this.log('Triggering custom UI (per-call)...');
     const result = await this.confirmService.confirm({
+      ui: CustomConfirmComponent,
       title: 'Premium Experience',
-      description: 'This dialog uses a custom glassmorphic template bound dynamically via the confirm-outlet ng-template.',
-      data: { useCustomTheme: true },
-      confirmText: 'Excellent',
-      cancelText: 'Close'
+      message: 'This dialog uses a custom glassmorphic component passed directly in the confirm() call.',
+      buttons: [
+        { id: 'cancel', label: 'Close', role: 'cancel' },
+        { id: 'ok', label: 'Excellent', role: 'confirm', variant: 'primary', value: 'premium' }
+      ]
     });
     this.log(`Custom UI result: ${result}`);
   }
 
-  // Case 9: Image Support (handled via Data payload)
+  // Case 7: Fallback Test (Default UI)
+  async showFallbackDemo() {
+    this.log('Triggering fallback demo (Default UI)...');
+    const result = await this.confirmService.confirm({
+      title: 'Default Fallback',
+      message: 'This uses the mandatory DefaultConfirmComponent because no custom UI was provided.',
+      buttons: [
+        { id: 'ok', label: 'Got it', role: 'confirm', value: 'fallback-ok' }
+      ]
+    });
+    this.log(`Fallback result: ${result}`);
+  }
+
+  // Case 8: Custom UI with Multi-step
+  async showCustomMultiStep() {
+    this.log('Triggering custom multi-step...');
+    const result = await this.confirmService.confirm({
+      ui: CustomConfirmComponent,
+      title: 'Setup Wizard',
+      steps: [
+        {
+          title: 'Advanced Setup (1/2)',
+          message: 'This wizard uses the custom glassmorphic UI across all steps.',
+          buttons: [
+            { id: 'cancel', label: 'Exit', role: 'cancel' },
+            { id: 'next', label: 'Continue', variant: 'primary', action: (ctx: ConfirmContext) => ctx['next']() }
+          ],
+          image: 'confirm-success.png' as any // Also testing image in custom component steps
+        } as any,
+        {
+          title: 'Final Confirmation (2/2)',
+          message: 'Everything looks good! Ready to deploy?',
+          buttons: [
+            { id: 'back', label: 'Back', action: (ctx: ConfirmContext) => ctx['back']() },
+            { id: 'confirm', label: 'Deploy Now', role: 'confirm', variant: 'success', value: 'deployed' }
+          ]
+        }
+      ]
+    });
+    this.log(`Custom multi-step result: ${result}`);
+  }
+
+  // Case 9: Image Support
   async showImageConfirm() {
-    this.log('Triggering data payload confirm...');
+    this.log('Triggering image confirm...');
     const result = await this.confirmService.confirm({
       title: 'Success!',
-      description: 'Your action was processed successfully.',
-      data: { image: 'confirm-success.png' },
-      confirmText: 'Close'
+      message: 'Your action was processed successfully.',
+      image: 'confirm-success.png',
+      buttons: [
+        { id: 'ok', label: 'Close', role: 'confirm', variant: 'success', value: 'ok' }
+      ]
     });
     this.log(`Image confirm result: ${result}`);
   }
