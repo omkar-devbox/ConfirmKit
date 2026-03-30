@@ -1,0 +1,21 @@
+{
+  "name": "confirmation-box-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace=angular-demo",
+    "build:core": "npm run build --workspace=@confirmation-box/core",
+    "build:angular": "npm run build --workspace=@confirmation-box/angular"
+  },
+  "devDependencies": {
+    "@angular/cli": "^21.2.0",
+    "@angular-devkit/build-angular": "^21.2.0",
+    "@angular/compiler-cli": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "typescript": "~5.9.2",
+    "ng-packagr": "^21.2.0"
+  }
+}

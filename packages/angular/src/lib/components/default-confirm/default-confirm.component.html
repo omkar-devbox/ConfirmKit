@@ -1,0 +1,59 @@
+<div 
+  #dialogContainer
+  role="dialog" 
+  aria-modal="true" 
+  [attr.aria-labelledby]="titleId"
+  [attr.aria-describedby]="messageId"
+  [focusTrap]="((state$ | async)?.isOpen) ?? false"
+  [initialFocus]="(state$ | async)?.options?.behavior?.initialFocus"
+  [restoreFocus]="(state$ | async)?.options?.behavior?.restoreFocus !== false"
+  tabindex="-1"
+  [ngClass]="ui.className"
+  [ngStyle]="ui.styles?.container"
+  [class.loading]="(state$ | async)?.loading"
+  (keydown)="onKeyDown($event)"
+>
+  <div class="confirm-card" [ngClass]="'variant-' + (ui.variant || 'modern')">
+    <!-- Header -->
+    <header [ngClass]="ui.headerClass" [ngStyle]="ui.styles?.header">
+      @if (getImage()) {
+        <div class="confirm-image-container">
+          <img [src]="getImage()" class="confirm-image" alt="Confirm illustration" />
+        </div>
+      }
+      <h2 [id]="titleId" class="confirm-title">{{ getTitle() }}</h2>
+    </header>
+
+    <!-- Body -->
+    <section [ngClass]="ui.bodyClass" [ngStyle]="ui.styles?.body">
+      <p [id]="messageId" class="confirm-message">{{ getMessage() }}</p>
+      
+      <!-- Custom Content Placeholder (if any) -->
+      @if ((state$ | async)?.options?.content) {
+        <div class="confirm-custom-content">
+          <!-- Multi-step content or global content can be rendered here -->
+        </div>
+      }
+    </section>
+
+    <!-- Footer / Buttons -->
+    <footer [ngClass]="ui.footerClass" [ngStyle]="ui.styles?.footer">
+      @for (button of getCurrentButtons(); track button.id) {
+        <button 
+          type="button" 
+          [attr.data-role]="button.role"
+          [ngClass]="(button.role && ui.buttonClasses?.[button.role]) || ui.buttonClass"
+          [ngStyle]="ui.styles?.button"
+          [class.confirm-btn-loading]="button.loading"
+          [disabled]="button.disabled || (state$ | async)?.loading"
+          (click)="handleAction(button)"
+        >
+          @if (button.loading) {
+            <span class="spinner"></span>
+          }
+          {{ button.label }}
+        </button>
+      }
+    </footer>
+  </div>
+</div>

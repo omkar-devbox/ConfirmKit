@@ -1,0 +1,94 @@
+<div class="demo-container">
+  <header>
+    <h1>Confirmation Box Demo</h1>
+    <p>Testing @confirmation-box/angular library components and service.</p>
+  </header>
+
+  <main class="demo-grid">
+    <!-- Case 1: Basic Service -->
+    <section class="card">
+      <h3>1. Basic Confirm (Service)</h3>
+      <p>Simple service call using <code>confirmService.confirm()</code>.</p>
+      <button class="btn btn-primary" (click)="showBasicConfirm()">Show Basic</button>
+    </section>
+
+    <!-- Case 2: Directive Usage -->
+    <section class="card">
+      <h3>2. Directive Usage</h3>
+      <p>Using the <code>[confirm]</code> structural/attribute-like directive.</p>
+      <button class="btn btn-secondary" [confirm]="directiveOptions" (confirmed)="onConfirmed($event)"
+        (cancelled)="onCancelled()">
+        Show via Directive
+      </button>
+    </section>
+
+    <!-- Case 3: Async Action -->
+    <section class="card">
+      <h3>3. Async Action</h3>
+      <p>Dialog with an async handler and loading state.</p>
+      <button class="btn btn-success" (click)="showAsyncConfirm()">Show Async</button>
+    </section>
+
+    <!-- Case 4: Multi-step -->
+    <section class="card">
+      <h3>4. Multi-step Flow</h3>
+      <p>Demonstrate navigation between multiple dialog steps.</p>
+      <button class="btn btn-warning" (click)="showMultiStep()">Show Multi-step</button>
+    </section>
+
+    <!-- Case 5: Queue Test -->
+    <section class="card">
+      <h3>5. Queue Management</h3>
+      <p>Triggers 3 dialogs rapidly to verify FIFO queue behavior.</p>
+      <button class="btn btn-danger" (click)="showQueueTest()">Trigger Queue</button>
+    </section>
+
+    <!-- Case 6: Custom UI (Per-call) -->
+    <section class="card highlight">
+      <h3>6. Custom UI (Injection)</h3>
+      <p>Pass a custom component directly to the <code>confirm()</code> method.</p>
+      <button class="btn btn-premium" (click)="showCustomUI()">Show Custom UI</button>
+    </section>
+
+    <!-- Case 7: Fallback Mechanism -->
+    <section class="card">
+      <h3>7. Strict Fallback</h3>
+      <p>Verifies the mandatory fallback to <code>DefaultConfirmComponent</code>.</p>
+      <button class="btn btn-outline" (click)="showFallbackDemo()">Show Fallback</button>
+    </section>
+    <!-- Case 8: Custom multi-step -->
+    <section class="card highlight">
+      <h3>8. Custom Multi-step</h3>
+      <p>Combine custom UI components with multi-step flow logic.</p>
+      <button class="btn btn-premium" (click)="showCustomMultiStep()">Show Custom Multi-step</button>
+    </section>
+    <!-- Case 9: Image Support -->
+    <section class="card">
+      <h3>9. Visual Feedback</h3>
+      <p>Pass an image URL to display a rich illustration in the dialog.</p>
+      <button class="btn btn-success" (click)="showImageConfirm()">Show with Image</button>
+    </section>
+
+    <!-- Case 10: Advanced Multi-step -->
+    <section class="card highlight">
+      <h3>10. Pro Multi-step Flow</h3>
+      <p>Advanced step-based navigation with modern UI and custom focus.</p>
+      <button class="btn btn-premium" (click)="showAdvancedMultiStep()">Launch Setup</button>
+    </section>
+  </main>
+
+  <aside class="log-panel">
+    <div class="log-header">
+      <h3>Execution Logs</h3>
+      <button class="btn-clear" (click)="clearLogs()">Clear</button>
+    </div>
+    <div class="log-list">
+      <div *ngFor="let log of logs" class="log-item">
+        {{ log }}
+      </div>
+      <div *ngIf="logs.length === 0" class="log-placeholder">
+        No logs to show. Interact with the demo cases above.
+      </div>
+    </div>
+  </aside>
+</div>
