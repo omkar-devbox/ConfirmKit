@@ -6,12 +6,11 @@
   },
   "peerDependencies": {
     "@angular/common": "^21.2.0",
-    "@angular/core": "^21.2.0"
+    "@angular/core": "^21.2.0",
+    "@confirmation-box/core": "0.1.0"
   },
   "dependencies": {
-    "@angular/cdk": "^21.0.0",
-    "tslib": "^2.3.0",
-    "@confirmation-box/core": "0.1.0"
+    "tslib": "^2.3.0"
   },
   "sideEffects": false
 }
