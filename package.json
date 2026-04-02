@@ -1,0 +1,17 @@
+{
+  "name": "confirmkit",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Headless confirm dialog system",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r dev",
+    "clean": "rm -rf node_modules packages/*/node_modules"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "license": "MIT"
+}

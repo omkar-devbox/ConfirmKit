@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@confirmkit/core": ["../packages/core/index.ts"],
+      "@confirmkit/core/*": ["../packages/core/*"],
+      "@confirmkit/vanilla": ["../packages/vanilla/src/index.ts"]
+    }
+  },
+  "include": ["demo.ts"]
+}

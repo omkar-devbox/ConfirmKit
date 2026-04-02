@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ConfirmKit • Premium React Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #111827;
+            --text-muted: #6b7280;
+            --card: #ffffff;
+            --border: #f3f4f6;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --log-bg: #f9fafb;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #030712;
+                --text: #f9fafb;
+                --text-muted: #9ca3af;
+                --card: #111827;
+                --border: #1f2937;
+                --primary: #3b82f6;
+                --primary-hover: #60a5fa;
+                --log-bg: #0f172a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            transition: background-color 0.3s ease;
+        }
+
+        #root {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 480px) {
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .demo-btn {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .demo-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .demo-btn.primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+        }
+
+        .demo-btn.primary:hover {
+            background: var(--primary-hover);
+        }
+
+        #log {
+            background: var(--log-bg);
+            border-radius: 16px;
+            padding: 20px;
+            font-family: 'ui-monospace', 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+            font-size: 0.8125rem;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .log-entry {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            opacity: 0.6;
+            white-space: nowrap;
+        }
+
+        .log-msg { word-break: break-word; }
+
+        .log-success { color: #10b981; }
+        .log-cancel { color: #ef4444; }
+        .log-info { color: var(--text); }
+
+        .demo-btn.danger {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fee2e2;
+        }
+
+        .demo-btn.danger:hover {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .demo-btn.success {
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #dcfce7;
+        }
+
+        .demo-btn.success:hover {
+            background: #dcfce7;
+            border-color: #22c55e;
+        }
+
+        .demo-btn.warning {
+            background: #fffbeb;
+            color: #92400e;
+            border-color: #fef3c7;
+        }
+
+        .demo-btn.warning:hover {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        footer {
+            margin-top: 48px;
+            text-align: center;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        footer code {
+            padding: 2px 6px;
+            background: var(--log-bg);
+            border-radius: 4px;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
